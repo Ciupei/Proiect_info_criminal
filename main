@@ -1,0 +1,207 @@
+#include <iostream>
+#include <cstring>
+#include <fstream>
+#include <algorithm>
+
+using namespace std;
+
+ifstream fin("criminal.in");
+
+
+int gameOn = 1;
+void color()
+{
+    system("Color 70");
+    cout << "BUN VENIT LA MISTERUL GUCCI" << endl;
+    cout << endl;
+}
+struct Elev
+{
+    char nume[20];
+    char firma[20];
+    float height;
+    int minut_intrare;
+    int minut_iesire;
+}elev;
+
+Elev a[105];
+int n = 8;
+
+void citire()
+{
+    for (int i = 1; i <= n; i++)
+    {
+        fin >> a[i].nume;
+        fin >> a[i].firma;
+        fin >> a[i].height;
+        fin >> a[i].minut_intrare;
+        fin >> a[i].minut_iesire;
+    }
+}
+
+void afisare()
+{
+    for (int i = 1; i <= n; i++)
+    {
+        cout << a[i].nume << endl;
+        cout << a[i].firma << endl;
+        cout << a[i].height << endl;
+        cout << a[i].minut_intrare << endl;
+        cout << a[i].minut_iesire << endl;
+        cout << endl;
+    }
+}
+
+bool compare(Elev a, Elev b)
+{
+    if (a.height != b.height)
+    {
+        return a.height > b.height;
+    }
+    return 0;
+}
+
+void sortare_inaltime()
+{
+    sort(a+1, a + n+1, compare);
+}
+
+void eliminare()
+{
+    char nume1[20];
+    cout << "Pe cine eliminati:";
+    cin >> nume1;
+    for (int i = 1; i <= n; i++)
+    {
+        if (strcmp(nume1,a[i].nume)==0)
+        {
+            for (int j = i; j < n; j++)
+            {
+                a[j] = a[j+1];
+            }
+            n--;
+        }
+    }
+    if (strcmp(nume1, "Modola") == 0)
+    {
+        cout << "Ati pierdut! Modola era criminalul";
+        gameOn = 0;
+    }
+}
+int suma()
+{
+    return n * 2500;
+}
+
+void interval_orar()
+{
+    for (int i = 1; i <= n; i++)
+    {
+        cout << a[i].nume << ":" << a[i].minut_iesire - a[i].minut_intrare << endl;
+    }
+}
+
+int probabilitate()
+{
+    bool ok = 0;
+    for (int i = 1; i <= n; i++)
+    {
+        if (strcmp(a[i].nume, "Modola") == 0)
+        {
+            ok = 1;
+            break;
+        }
+    }
+    if (ok)
+    {
+        return double(100 / n);
+    }
+    else return 0;
+}
+
+int demascare_criminal(char criminal[20])
+{
+    if (strcmp(criminal, "Modola") == 0)
+    {
+        return true;
+    }
+    return false;
+}
+
+void meniu()
+{
+    int optiune;
+ 
+    while (gameOn != 0)
+    {
+        cout << "Apasa tasta 1 pentru afisarea suspectiilor:" << endl;
+        cout << "Apasa tasta 2 pentru a vedea timpul din magazin:" << endl;
+        cout << "Apasa tasta 3 pentru a sorta inaltimile:" << endl;
+        cout << "Apasa tasta 4 pentru a elimina un suspect:" << endl;
+        cout << "Apasa tasta 5 pentru a vedea suma ramasa:" << endl;
+        cout << "Apasa tasta 6 pentru a vedea probabilitatea de a gasi criminalul:" << endl;
+        cout << "Apasa tasta 7 pentru a demasca criminalul:" << endl;
+        cout << "Apasa tasta 8 pentru a iesi:" << endl;
+        cin >> optiune;
+        switch (optiune)
+        {
+        case 1:
+            afisare();
+            cout << endl;
+            break;
+        case 2:
+            interval_orar();
+            cout << endl;
+            break;
+        case 3:
+            sortare_inaltime();
+            afisare();
+            cout << endl;
+            break;
+        case 4:
+            eliminare();
+            if (gameOn)
+            {
+                afisare();
+            }
+            
+            cout << endl;
+            break;
+        case 5:
+            cout << "Ai mai ramas cu suma de:" << suma() << endl;
+            break;
+        case 6:
+            
+            cout << "Sansa de a gasi criminalul este de: " << probabilitate() << "%" << endl;
+            break;
+        case 7:
+            char criminal[20];
+            cout << "Cine e criminalul?" << " ";
+            cin >> criminal;
+            if (demascare_criminal(criminal))
+            {
+                cout << "Felicitari! Ai descoperit criminalul!";
+                gameOn = 0;
+                break;
+            }
+            else
+            {
+                cout << "Vai de capul tau! Criminalul era Modola!";
+                gameOn = 0;
+                break;
+            }
+        case 8:
+            cout << "Iesire program";
+            gameOn = 0;
+            break;
+        }
+    }
+}
+int main()
+{
+    color();
+    citire();
+    meniu();
+    
+    return 0;
+}
